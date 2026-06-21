@@ -6,9 +6,11 @@ const elementsLayer = document.getElementById('canvas-elements-layer');
 const textLayer = document.getElementById('canvas-text-layer');
 
 const toggleOrientationBtn = document.getElementById('toggle-orientation-btn');
-const typographyPanel = document.getElementById('typography-panel');
+const elementControlPanel = document.getElementById('element-control-panel');
+const textControls = document.getElementById('text-controls');
 const fontSelector = document.getElementById('font-selector');
 const textColorPicker = document.getElementById('text-color-picker');
+const sizeSlider = document.getElementById('size-slider');
 
 let selectedElement = null;
 let zIndexCounter = 100;
@@ -53,6 +55,21 @@ function init() {
   textColorPicker.addEventListener('input', (e) => {
     if (selectedElement && selectedElement.classList.contains('is-text')) {
       selectedElement.style.color = e.target.value;
+    }
+  });
+
+  sizeSlider.addEventListener('input', (e) => {
+    if (selectedElement) {
+      const scale = e.target.value;
+      selectedElement.dataset.scale = scale;
+      if (selectedElement.classList.contains('is-text')) {
+        // base size for title is 6xl (60px), billing is 10px
+        const baseSize = selectedElement.id === 'billing-block-instance' ? 10 : 60;
+        selectedElement.style.fontSize = `${baseSize * scale}px`;
+      } else {
+        // base width for image is 256px
+        selectedElement.style.width = `${256 * scale}px`;
+      }
     }
   });
 
@@ -143,7 +160,9 @@ function setBackground(src) {
 function addCharacter(src, x, y) {
   const img = document.createElement('img');
   img.src = src;
+  img.draggable = false;
   img.className = 'canvas-element w-64 h-auto pointer-events-auto'; // Base width 256px
+  img.dataset.scale = "1";
   img.style.left = `${x - 128}px`; // Center on pointer
   img.style.top = `${y - 128}px`;
   
@@ -156,6 +175,7 @@ function addTitle() {
   title.className = 'canvas-element is-text canvas-text-editable font-anton text-6xl text-white pointer-events-auto p-2';
   title.contentEditable = true;
   title.innerText = 'TIÊU ĐỀ PHIM';
+  title.dataset.scale = "1";
   title.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
   
   textLayer.appendChild(title);
@@ -187,6 +207,7 @@ function addBillingBlock() {
   billing.id = 'billing-block-instance';
   billing.className = 'canvas-element is-text canvas-text-editable billing-block-style pointer-events-auto font-be-vietnam p-2';
   billing.contentEditable = true;
+  billing.dataset.scale = "1";
   billing.innerText = 'MỘT BỘ PHIM CỦA [TÊN HỌC SINH] • ĐẠO DIỄN: [TÊN HỌC SINH] • KHỞI CHIẾU HÈ NÀY • ĐỊNH DẠNG 2D, 3D & IMAX';
   
   // Snap to bottom center
@@ -281,8 +302,11 @@ function selectElement(el) {
   el.classList.add('selected');
   el.focus();
   
+  elementControlPanel.classList.remove('hidden');
+  sizeSlider.value = el.dataset.scale || 1;
+
   if (el.classList.contains('is-text')) {
-    typographyPanel.classList.remove('hidden');
+    textControls.classList.remove('hidden');
     // Match select value
     const match = el.className.match(/\bfont-\S+/);
     if (match) {
@@ -290,6 +314,8 @@ function selectElement(el) {
     } else {
       fontSelector.value = 'font-be-vietnam'; // default
     }
+  } else {
+    textControls.classList.add('hidden');
   }
 }
 
@@ -299,7 +325,7 @@ function deselectAll() {
     selectedElement.blur();
     selectedElement = null;
   }
-  typographyPanel.classList.add('hidden');
+  elementControlPanel.classList.add('hidden');
 }
 
 // App State Management
