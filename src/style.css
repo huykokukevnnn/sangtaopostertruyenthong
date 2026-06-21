@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Utilities for Canvas */
+.canvas-element {
+  position: absolute;
+  cursor: grab;
+  user-select: none;
+}
+
+.canvas-element:active {
+  cursor: grabbing;
+}
+
+.canvas-text-editable {
+  outline: none;
+  border: 2px border-transparent;
+  transition: border-color 0.2s;
+}
+
+.canvas-text-editable:focus {
+  border: 2px dashed rgba(255, 255, 255, 0.5);
+  cursor: text;
+}
+
+.canvas-element.selected {
+  outline: 3px dashed #6366f1; /* indigo-500 */
+  outline-offset: 4px;
+}
+
+.billing-block-style {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  text-transform: uppercase;
+  font-stretch: condensed;
+  font-size: 10px; /* will scale up with canvas */
+  line-height: 1.2;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.05em;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+}
