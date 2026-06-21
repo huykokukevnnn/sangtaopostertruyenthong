@@ -1,6 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --font-anton: 'Anton', sans-serif;
+  --font-pattaya: 'Pattaya', sans-serif;
+  --font-mali: 'Mali', cursive;
+  --font-be-vietnam: '"Be Vietnam Pro"', sans-serif;
+  --font-luckiest: '"Luckiest Guy"', cursive;
+  --font-bangers: 'Bangers', system-ui;
+  --shadow-cinema: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
 
 /* Custom Utilities for Canvas */
 .canvas-element {
