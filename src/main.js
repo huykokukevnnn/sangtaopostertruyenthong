@@ -63,6 +63,10 @@ function init() {
   document.getElementById('btn-close-preview').addEventListener('click', hidePreview);
   
   loadState();
+
+  if (!document.getElementById('billing-block-instance')) {
+    addBillingBlock();
+  }
 }
 
 function setCanvasSize() {
@@ -139,7 +143,7 @@ function setBackground(src) {
 function addCharacter(src, x, y) {
   const img = document.createElement('img');
   img.src = src;
-  img.className = 'canvas-element w-64 h-auto pointer-events-auto mix-blend-multiply'; // Base width 256px
+  img.className = 'canvas-element w-64 h-auto pointer-events-auto'; // Base width 256px
   img.style.left = `${x - 128}px`; // Center on pointer
   img.style.top = `${y - 128}px`;
   
