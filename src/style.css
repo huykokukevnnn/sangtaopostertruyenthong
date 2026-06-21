@@ -33,8 +33,9 @@
 }
 
 .canvas-element.selected {
-  outline: 3px dashed #6366f1; /* indigo-500 */
-  outline-offset: 4px;
+  outline: 2px dashed #3b82f6; /* blue-500 */
+  outline-offset: 2px;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
 }
 
 .billing-block-style {
@@ -44,7 +45,7 @@
   font-size: 10px; /* will scale up with canvas */
   line-height: 1.2;
   text-align: center;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.9);
   letter-spacing: 0.05em;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
 }

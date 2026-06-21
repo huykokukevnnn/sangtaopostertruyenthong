@@ -132,14 +132,14 @@ function setBackground(src) {
   bgLayer.innerHTML = ''; // Clear existing
   const img = document.createElement('img');
   img.src = src;
-  img.className = 'w-full h-full object-cover pointer-events-auto cursor-pointer';
+  img.className = 'w-full h-full object-cover pointer-events-none';
   bgLayer.appendChild(img);
 }
 
 function addCharacter(src, x, y) {
   const img = document.createElement('img');
   img.src = src;
-  img.className = 'canvas-element w-64 h-auto pointer-events-auto'; // Base width 256px
+  img.className = 'canvas-element w-64 h-auto pointer-events-auto mix-blend-multiply'; // Base width 256px
   img.style.left = `${x - 128}px`; // Center on pointer
   img.style.top = `${y - 128}px`;
   
@@ -152,12 +152,18 @@ function addTitle() {
   title.className = 'canvas-element is-text canvas-text-editable font-anton text-6xl text-white pointer-events-auto p-2';
   title.contentEditable = true;
   title.innerText = 'TIÊU ĐỀ PHIM';
-  title.style.textShadow = '2px 2px 4px rgba(0,0,0,0.8)';
-  title.style.left = '100px';
-  title.style.top = '100px';
+  title.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
+  
+  textLayer.appendChild(title);
+  
+  // Center at top 15%
+  const cw = posterCanvas.offsetWidth;
+  const ch = posterCanvas.offsetHeight;
+  const ew = title.offsetWidth;
+  title.style.left = `${(cw - ew) / 2}px`;
+  title.style.top = `${ch * 0.15}px`;
   
   makeInteractive(title);
-  textLayer.appendChild(title);
   selectElement(title);
 }
 
