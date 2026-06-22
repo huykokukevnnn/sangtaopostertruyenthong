@@ -33,7 +33,6 @@ function init() {
   setupCanvasDropZone();
   
   // Controls
-  toggleOrientationBtn.addEventListener('click', toggleOrientation);
   
   // Deselect on clicking canvas background
   posterCanvas.addEventListener('pointerdown', (e) => {
@@ -92,13 +91,14 @@ function updateSize(scale) {
     
     if (selectedElement.classList.contains('is-text')) {
       const baseSize = 60;
-      selectedElement.style.fontSize = `${baseSize * scale}px`;
+      selectedElement.style.setProperty('font-size', `${baseSize * scale}px`, 'important');
       saveState();
     } else {
       // base width for image is 256px
-      selectedElement.style.width = `${256 * scale}px`;
+      selectedElement.style.setProperty('width', `${256 * scale}px`, 'important');
+      selectedElement.style.setProperty('height', `auto`, 'important');
       // Ensure max-width doesn't constrain it
-      selectedElement.style.maxWidth = 'none';
+      selectedElement.style.setProperty('max-width', 'none', 'important');
       saveState();
     }
   }
