@@ -201,7 +201,8 @@ function addTitle() {
   const cw = posterCanvas.offsetWidth;
   const ch = posterCanvas.offsetHeight;
   title.style.left = `${(cw - title.offsetWidth) / 2}px`;
-  title.style.top = `15%`;
+  title.style.top = `50%`;
+  title.style.transform = 'translateY(-50%)';
   
   selectElement(title);
   saveState();
