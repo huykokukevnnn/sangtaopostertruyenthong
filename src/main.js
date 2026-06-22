@@ -50,12 +50,14 @@ function init() {
       // Remove old font classes
       selectedElement.className = selectedElement.className.replace(/\bfont-\S+/g, '').trim();
       selectedElement.classList.add(e.target.value);
+      saveState();
     }
   });
   
   textColorPicker.addEventListener('input', (e) => {
     if (selectedElement && selectedElement.classList.contains('is-text')) {
       selectedElement.style.color = e.target.value;
+      saveState();
     }
   });
 
@@ -74,13 +76,8 @@ function init() {
   document.getElementById('btn-preview').addEventListener('click', showPreview);
   document.getElementById('close-preview-btn').addEventListener('click', hidePreview);
   document.getElementById('add-title-btn').addEventListener('click', addTitle);
-  document.getElementById('add-billing-btn').addEventListener('click', addBillingBlock);
   
   loadState();
-
-  if (!document.getElementById('billing-block-instance')) {
-    // DO NOT ADD DEFAULT
-  }
 }
 
 function updateSize(scale) {
@@ -90,12 +87,15 @@ function updateSize(scale) {
     sizeNumber.value = Math.round(scale * 100);
     
     if (selectedElement.classList.contains('is-text')) {
-      // base size for title is 6xl (60px), billing is 10px
-      const baseSize = selectedElement.id === 'billing-block-instance' ? 10 : 60;
+      const baseSize = 60;
       selectedElement.style.fontSize = `${baseSize * scale}px`;
+      saveState();
     } else {
       // base width for image is 256px
       selectedElement.style.width = `${256 * scale}px`;
+      // Ensure max-width doesn't constrain it
+      selectedElement.style.maxWidth = 'none';
+      saveState();
     }
   }
 }
@@ -155,8 +155,6 @@ function setupCanvasDropZone() {
       setBackground(src);
     } else if (type === 'character') {
       addCharacter(src, x, y);
-    } else if (type === 'billing') {
-      addBillingBlock();
     }
   });
 }
@@ -204,31 +202,6 @@ function addTitle() {
   title.style.transform = 'translateY(-50%)';
   
   selectElement(title);
-  saveState();
-}
-
-function addBillingBlock() {
-  if (document.getElementById('billing-block-instance')) return;
-  const billing = document.createElement('div');
-  billing.id = 'billing-block-instance';
-  billing.className = 'canvas-element is-text canvas-text-editable billing-block-style pointer-events-auto font-be-vietnam p-2';
-  billing.contentEditable = false;
-  billing.dataset.scale = "2";
-  billing.style.fontSize = "20px";
-  billing.style.color = "#000000";
-  billing.style.textShadow = 'none';
-  billing.innerText = 'Khởi chiếu ngày 10.10.2026 Đạo diễn (Tên học sinh) Diễn viên (Tên học sinh),(Tên học sinh),(Tên học sinh),....';
-  
-  textLayer.appendChild(billing);
-  makeInteractive(billing);
-  billing.style.bottom = '40px';
-  billing.style.left = '50%';
-  billing.style.transform = 'translateX(-50%)';
-  // Needs to be wide enough
-  billing.style.width = '90%';
-  billing.style.textAlign = 'center';
-  
-  selectElement(billing);
   saveState();
 }
 
@@ -423,7 +396,7 @@ function loadState() {
     
     // Re-attach interactiveness
     document.querySelectorAll('#canvas-elements-layer .canvas-element, #canvas-text-layer .canvas-element').forEach(el => {
-      makeInteractive(el, el.id === 'billing-block-instance');
+      makeInteractive(el);
     });
   }
 }
