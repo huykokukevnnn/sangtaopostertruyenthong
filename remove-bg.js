@@ -1,7 +1,7 @@
 import { Jimp } from 'jimp';
 import fs from 'fs';
 
-const files = fs.readdirSync('./public/assets').filter(f => (f.startsWith('char_') || f.startsWith('prop_')) && f.endsWith('.png'));
+const files = fs.readdirSync('./public/assets').filter(f => (f.startsWith('char_') || f.startsWith('prop_') || f.startsWith('ground_')) && f.endsWith('.png'));
 
 async function processImages() {
   for (const file of files) {

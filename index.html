@@ -28,10 +28,11 @@
         
         <!-- The Canvas -->
         <div id="poster-canvas" class="bg-white shadow-cinema relative overflow-hidden transition-all duration-500 ease-in-out" data-orientation="portrait" style="width: 600px; height: 800px;">
-          <!-- Items will be dropped here -->
-          <div id="canvas-background-layer" class="absolute inset-0 z-[1] pointer-events-none"></div>
-          <div id="canvas-elements-layer" class="absolute inset-0 z-[10] pointer-events-none"></div>
-          <div id="canvas-text-layer" class="absolute inset-0 z-[20] pointer-events-none"></div>
+          <!-- Layers -->
+          <div id="canvas-background-layer" class="absolute inset-0 pointer-events-none"></div>
+          <div id="canvas-ground-layer" class="absolute inset-x-0 bottom-0 pointer-events-none"></div>
+          <div id="canvas-elements-layer" class="absolute inset-0 pointer-events-none"></div>
+          <div id="canvas-text-layer" class="absolute inset-0 pointer-events-none"></div>
         </div>
 
       </div>
@@ -60,9 +61,20 @@
           </div>
         </section>
 
+        <!-- Ground Section -->
+        <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+          <h2 class="font-bold text-lg mb-3 text-gray-800">2. Chọn Mặt Đất</h2>
+          <div class="grid grid-cols-2 gap-3">
+            <img src="/assets/ground_grass.png" class="w-full aspect-video object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-500 transition" draggable="true" data-type="ground">
+            <img src="/assets/ground_scifi.png" class="w-full aspect-video object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-500 transition" draggable="true" data-type="ground">
+            <img src="/assets/ground_asphalt.png" class="w-full aspect-video object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-500 transition" draggable="true" data-type="ground">
+            <img src="/assets/ground_dirt.png" class="w-full aspect-video object-cover rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-500 transition" draggable="true" data-type="ground">
+          </div>
+        </section>
+
         <!-- Characters Section -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 class="font-bold text-lg mb-3 text-gray-800">2. Nhân vật & Sticker</h2>
+          <h2 class="font-bold text-lg mb-3 text-gray-800">3. Nhân vật & Sticker</h2>
           <div class="grid grid-cols-3 gap-3" id="panel-characters">
             <img src="/assets/char_joy.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/char_angry.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
@@ -75,7 +87,7 @@
 
         <!-- Props Section -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 class="font-bold text-lg mb-3 text-gray-800">3. Đồ vật & Trang trí</h2>
+          <h2 class="font-bold text-lg mb-3 text-gray-800">4. Đồ vật & Trang trí</h2>
           <div class="grid grid-cols-3 gap-3" id="panel-props">
             <img src="/assets/prop_tree.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/prop_house.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
@@ -85,13 +97,12 @@
             <img src="/assets/prop_dropped_icecream.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/prop_camera_tripod.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/prop_bed.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
-            <img src="/assets/prop_ground_path.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
           </div>
         </section>
 
         <!-- Titles Section -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 class="font-bold text-lg mb-3 text-gray-800">4. Tiêu đề</h2>
+          <h2 class="font-bold text-lg mb-3 text-gray-800">5. Tiêu đề</h2>
           <button id="add-title-btn" class="w-full bg-blue-100 text-blue-700 font-bold py-3 rounded-lg border-2 border-blue-200 hover:bg-blue-200 transition border-dashed flex items-center justify-center gap-2">
             <span class="text-xl">+</span> Thêm Tiêu Đề
           </button>
@@ -123,7 +134,7 @@
 
         <!-- Billing Block Section -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 class="font-bold text-lg mb-3 text-gray-800">5. Thông tin đoàn phim</h2>
+          <h2 class="font-bold text-lg mb-3 text-gray-800">6. Thông tin đoàn phim</h2>
           <button id="add-billing-btn" class="draggable-element w-full bg-purple-100 text-purple-700 font-bold py-3 rounded-lg border-2 border-purple-200 hover:bg-purple-200 transition flex items-center justify-center gap-2 cursor-grab" draggable="true" data-type="billing">
             Kéo thả hoặc Nhấn để thêm
           </button>

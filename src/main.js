@@ -140,6 +140,8 @@ function setupCanvasDropZone() {
 
     if (type === 'background') {
       setBackground(src);
+    } else if (type === 'ground') {
+      setGround(src);
     } else if (type === 'character') {
       addCharacter(src, x, y);
     } else if (type === 'billing') {
@@ -150,11 +152,24 @@ function setupCanvasDropZone() {
 
 // Element Creation
 function setBackground(src) {
-  bgLayer.innerHTML = ''; // Clear existing
+  bgLayer.innerHTML = '';
   const img = document.createElement('img');
   img.src = src;
-  img.className = 'w-full h-full object-cover pointer-events-none';
+  img.className = 'w-full h-full object-cover';
+  img.draggable = false;
   bgLayer.appendChild(img);
+  saveState();
+}
+
+function setGround(src) {
+  const groundLayer = document.getElementById('canvas-ground-layer');
+  groundLayer.innerHTML = '';
+  const img = document.createElement('img');
+  img.src = src;
+  img.className = 'absolute bottom-0 w-full h-auto object-cover object-top';
+  img.draggable = false;
+  groundLayer.appendChild(img);
+  saveState();
 }
 
 function addCharacter(src, x, y) {
