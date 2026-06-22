@@ -6,11 +6,12 @@ const elementsLayer = document.getElementById('canvas-elements-layer');
 const textLayer = document.getElementById('canvas-text-layer');
 
 const toggleOrientationBtn = document.getElementById('toggle-orientation-btn');
-const elementControlPanel = document.getElementById('element-control-panel');
+const canvasToolbar = document.getElementById('canvas-toolbar');
 const textControls = document.getElementById('text-controls');
 const fontSelector = document.getElementById('font-selector');
 const textColorPicker = document.getElementById('text-color-picker');
 const sizeSlider = document.getElementById('size-slider');
+const sizeNumber = document.getElementById('size-number');
 
 let selectedElement = null;
 let zIndexCounter = 100;
@@ -59,19 +60,31 @@ function init() {
   });
 
   sizeSlider.addEventListener('input', (e) => {
-    if (selectedElement) {
-      const scale = e.target.value;
-      selectedElement.dataset.scale = scale;
-      if (selectedElement.classList.contains('is-text')) {
-        // base size for title is 6xl (60px), billing is 10px
-        const baseSize = selectedElement.id === 'billing-block-instance' ? 10 : 60;
-        selectedElement.style.fontSize = `${baseSize * scale}px`;
-      } else {
-        // base width for image is 256px
-        selectedElement.style.width = `${256 * scale}px`;
-      }
-    }
+    updateSize(e.target.value);
   });
+  
+  sizeNumber.addEventListener('input', (e) => {
+    const scale = e.target.value / 100;
+    updateSize(scale);
+  });
+}
+
+function updateSize(scale) {
+  if (selectedElement) {
+    selectedElement.dataset.scale = scale;
+    sizeSlider.value = scale;
+    sizeNumber.value = Math.round(scale * 100);
+    
+    if (selectedElement.classList.contains('is-text')) {
+      // base size for title is 6xl (60px), billing is 10px
+      const baseSize = selectedElement.id === 'billing-block-instance' ? 10 : 60;
+      selectedElement.style.fontSize = `${baseSize * scale}px`;
+    } else {
+      // base width for image is 256px
+      selectedElement.style.width = `${256 * scale}px`;
+    }
+  }
+}
 
   // Action Buttons
   document.getElementById('btn-save').addEventListener('click', saveState);
@@ -231,19 +244,20 @@ function makeInteractive(el, isBilling = false) {
     // Disable pointer events on canvas background to prevent glitching
     posterCanvas.style.touchAction = 'none';
     
-    const scale = posterCanvas.getBoundingClientRect().width / posterCanvas.offsetWidth;
-    startX = e.clientX / scale;
-    startY = e.clientY / scale;
+    const scaleCanvas = posterCanvas.getBoundingClientRect().width / posterCanvas.offsetWidth;
+    startX = e.clientX / scaleCanvas;
+    startY = e.clientY / scaleCanvas;
     
-    if (isBilling && el.style.bottom) {
-      // Convert bottom/transform to absolute top/left for dragging
-      const rect = el.getBoundingClientRect();
-      const canvasRect = posterCanvas.getBoundingClientRect();
-      el.style.bottom = 'auto';
-      el.style.transform = 'none';
-      el.style.left = `${(rect.left - canvasRect.left) / scale}px`;
-      el.style.top = `${(rect.top - canvasRect.top) / scale}px`;
-    }
+    // Normalize coordinates to prevent jumping
+    const rect = el.getBoundingClientRect();
+    const parentRect = posterCanvas.getBoundingClientRect();
+    
+    el.style.bottom = 'auto';
+    el.style.right = 'auto';
+    el.style.transform = 'none';
+    
+    el.style.left = `${(rect.left - parentRect.left) / scaleCanvas}px`;
+    el.style.top = `${(rect.top - parentRect.top) / scaleCanvas}px`;
     
     initialLeft = parseFloat(el.style.left) || 0;
     initialTop = parseFloat(el.style.top) || 0;
@@ -298,14 +312,25 @@ function makeInteractive(el, isBilling = false) {
   });
 }
 
+function rgbToHex(rgb) {
+  const arr = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+  if (!arr) return rgb;
+  return "#" +
+    ("0" + parseInt(arr[1], 10).toString(16)).slice(-2) +
+    ("0" + parseInt(arr[2], 10).toString(16)).slice(-2) +
+    ("0" + parseInt(arr[3], 10).toString(16)).slice(-2);
+}
+
 function selectElement(el) {
   deselectAll();
   selectedElement = el;
   el.classList.add('selected');
   el.focus();
   
-  elementControlPanel.classList.remove('hidden');
-  sizeSlider.value = el.dataset.scale || 1;
+  canvasToolbar.classList.remove('hidden');
+  const scale = el.dataset.scale || 1;
+  sizeSlider.value = scale;
+  sizeNumber.value = Math.round(scale * 100);
 
   if (el.classList.contains('is-text')) {
     textControls.classList.remove('hidden');
@@ -316,6 +341,8 @@ function selectElement(el) {
     } else {
       fontSelector.value = 'font-be-vietnam'; // default
     }
+    // Update color picker
+    textColorPicker.value = rgbToHex(window.getComputedStyle(el).color);
   } else {
     textControls.classList.add('hidden');
   }
@@ -327,7 +354,7 @@ function deselectAll() {
     selectedElement.blur();
     selectedElement = null;
   }
-  elementControlPanel.classList.add('hidden');
+  canvasToolbar.classList.add('hidden');
 }
 
 // App State Management
