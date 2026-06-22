@@ -68,6 +68,12 @@ function init() {
     updateSize(scale);
   });
 
+  document.getElementById('apply-size-btn').addEventListener('click', () => {
+    const scale = sizeNumber.value / 100;
+    updateSize(scale);
+    saveState();
+  });
+
   // Action Buttons
   document.getElementById('btn-save').addEventListener('click', saveState);
   document.getElementById('btn-reset').addEventListener('click', resetCanvas);
