@@ -77,7 +77,9 @@ function init() {
   document.getElementById('btn-save').addEventListener('click', saveState);
   document.getElementById('btn-reset').addEventListener('click', resetCanvas);
   document.getElementById('btn-preview').addEventListener('click', showPreview);
-  document.getElementById('btn-close-preview').addEventListener('click', hidePreview);
+  document.getElementById('close-preview-btn').addEventListener('click', hidePreview);
+  document.getElementById('add-title-btn').addEventListener('click', addTitle);
+  document.getElementById('add-billing-btn').addEventListener('click', addBillingBlock);
   
   loadState();
 
@@ -115,9 +117,8 @@ function setupSidebarDraggables() {
   draggables.forEach(el => {
     el.addEventListener('dragstart', (e) => {
       e.dataTransfer.setData('type', el.dataset.type);
-      if (el.tagName === 'IMG') {
-        e.dataTransfer.setData('src', el.src);
-      }
+      if (el.src) e.dataTransfer.setData('src', el.src);
+      if (el.dataset.groundId) e.dataTransfer.setData('groundId', el.dataset.groundId);
     });
   });
 }
@@ -411,17 +412,60 @@ function showPreview() {
   clone.style.transform = 'none'; // reset scale
   clone.classList.remove('shadow-cinema');
   
+  container.innerHTML = '';
+  
+  // Wrapper for scaling
+  const wrapper = document.createElement('div');
+  wrapper.style.transition = 'transform 0.1s ease-out';
+  wrapper.appendChild(clone);
+  
   // Scale down clone to fit screen nicely
   const padding = 80;
-  const scaleX = (window.innerWidth - padding) / clone.offsetWidth;
-  const scaleY = (window.innerHeight - padding) / clone.offsetHeight;
-  const scale = Math.min(scaleX, scaleY);
+  let scaleX = (window.innerWidth - padding) / clone.offsetWidth;
+  let scaleY = (window.innerHeight - padding) / clone.offsetHeight;
+  let currentScale = Math.min(scaleX, scaleY);
   
-  clone.style.transform = `scale(${scale})`;
-  clone.style.transformOrigin = 'center center';
+  wrapper.style.transform = `scale(${currentScale})`;
+  wrapper.style.transformOrigin = 'center center';
   
-  container.innerHTML = '';
-  container.appendChild(clone);
+  container.className = 'w-full h-full flex items-center justify-center overflow-hidden touch-none';
+  container.appendChild(wrapper);
+  
+  // Mouse Wheel Zoom
+  container.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    currentScale += e.deltaY * -0.001;
+    currentScale = Math.max(0.1, Math.min(currentScale, 3));
+    wrapper.style.transform = `scale(${currentScale})`;
+  });
+
+  // Touch Pinch Zoom
+  let initialDistance = 0;
+  let initialScale = currentScale;
+
+  container.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      initialDistance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      initialScale = currentScale;
+    }
+  });
+
+  container.addEventListener('touchmove', (e) => {
+    if (e.touches.length === 2) {
+      e.preventDefault();
+      const distance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      currentScale = initialScale * (distance / initialDistance);
+      currentScale = Math.max(0.1, Math.min(currentScale, 3));
+      wrapper.style.transform = `scale(${currentScale})`;
+    }
+  }, { passive: false });
   
   modal.classList.remove('hidden');
   // Trigger reflow
