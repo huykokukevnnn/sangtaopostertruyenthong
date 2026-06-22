@@ -72,7 +72,7 @@ function init() {
   document.getElementById('btn-save').addEventListener('click', saveState);
   document.getElementById('btn-reset').addEventListener('click', resetCanvas);
   document.getElementById('btn-preview').addEventListener('click', showPreview);
-  document.getElementById('close-preview-btn').addEventListener('click', hidePreview);
+  document.getElementById('btn-close-preview').addEventListener('click', hidePreview);
   document.getElementById('add-title-btn').addEventListener('click', addTitle);
   
   loadState();
