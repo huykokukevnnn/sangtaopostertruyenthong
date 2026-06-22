@@ -33,8 +33,6 @@ function init() {
   setupCanvasDropZone();
   
   // Controls
-  document.getElementById('add-title-btn').addEventListener('click', addTitle);
-  document.getElementById('add-billing-btn').addEventListener('click', () => addBillingBlock());
   toggleOrientationBtn.addEventListener('click', toggleOrientation);
   
   // Deselect on clicking canvas background
