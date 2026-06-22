@@ -255,16 +255,18 @@ function makeInteractive(el, isBilling = false) {
     startX = e.clientX / scaleCanvas;
     startY = e.clientY / scaleCanvas;
     
-    // Normalize coordinates to prevent jumping
-    const rect = el.getBoundingClientRect();
-    const parentRect = posterCanvas.getBoundingClientRect();
-    
-    el.style.bottom = 'auto';
-    el.style.right = 'auto';
-    el.style.transform = 'none';
-    
-    el.style.left = `${(rect.left - parentRect.left) / scaleCanvas}px`;
-    el.style.top = `${(rect.top - parentRect.top) / scaleCanvas}px`;
+    // Normalize coordinates to prevent jumping ONLY if constrained
+    if (el.style.bottom || el.style.right || el.style.transform || (el.style.top && el.style.top.includes('%')) || (el.style.left && el.style.left.includes('%'))) {
+      const rect = el.getBoundingClientRect();
+      const parentRect = posterCanvas.getBoundingClientRect();
+      
+      el.style.bottom = 'auto';
+      el.style.right = 'auto';
+      el.style.transform = 'none';
+      
+      el.style.left = `${(rect.left - parentRect.left) / scaleCanvas}px`;
+      el.style.top = `${(rect.top - parentRect.top) / scaleCanvas}px`;
+    }
     
     initialLeft = parseFloat(el.style.left) || 0;
     initialTop = parseFloat(el.style.top) || 0;
@@ -284,6 +286,15 @@ function makeInteractive(el, isBilling = false) {
     
     let newLeft = initialLeft + dx;
     let newTop = initialTop + dy;
+    
+    if (el.classList.contains('is-text')) {
+      const cw = posterCanvas.offsetWidth;
+      const ch = posterCanvas.offsetHeight;
+      const ew = el.offsetWidth;
+      const eh = el.offsetHeight;
+      newLeft = Math.max(0, Math.min(newLeft, cw - ew));
+      newTop = Math.max(0, Math.min(newTop, ch - eh));
+    }
     
     el.style.left = `${newLeft}px`;
     el.style.top = `${newTop}px`;
@@ -340,7 +351,8 @@ function selectElement(el) {
   el.classList.add('selected');
   el.focus();
   
-  canvasToolbar.classList.remove('hidden');
+  canvasToolbar.classList.remove('opacity-0', 'pointer-events-none');
+  canvasToolbar.classList.add('opacity-100', 'pointer-events-auto');
   const scale = el.dataset.scale || 1;
   sizeSlider.value = scale;
   sizeNumber.value = Math.round(scale * 100);
@@ -367,7 +379,8 @@ function deselectAll() {
     selectedElement.blur();
     selectedElement = null;
   }
-  canvasToolbar.classList.add('hidden');
+  canvasToolbar.classList.remove('opacity-100', 'pointer-events-auto');
+  canvasToolbar.classList.add('opacity-0', 'pointer-events-none');
 }
 
 // App State Management
