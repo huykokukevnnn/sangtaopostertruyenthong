@@ -82,7 +82,7 @@ function init() {
   loadState();
 
   if (!document.getElementById('billing-block-instance')) {
-    addBillingBlock();
+    // DO NOT ADD DEFAULT
   }
 }
 
@@ -111,7 +111,7 @@ function scaleCanvas() {
 
 // Sidebar Drag & Drop
 function setupSidebarDraggables() {
-  const draggables = document.querySelectorAll('.draggable-bg, .draggable-element');
+  const draggables = document.querySelectorAll('.draggable-bg, .draggable-element, .draggable-ground');
   draggables.forEach(el => {
     el.addEventListener('dragstart', (e) => {
       e.dataTransfer.setData('type', el.dataset.type);
@@ -141,7 +141,8 @@ function setupCanvasDropZone() {
     if (type === 'background') {
       setBackground(src);
     } else if (type === 'ground') {
-      setGround(src);
+      const groundId = document.querySelector(`[data-type="ground"][draggable="true"]:hover, [data-type="ground"]:active`)?.dataset.groundId || e.dataTransfer.getData('groundId');
+      setGround(groundId);
     } else if (type === 'character') {
       addCharacter(src, x, y);
     } else if (type === 'billing') {
@@ -161,14 +162,23 @@ function setBackground(src) {
   saveState();
 }
 
-function setGround(src) {
+function setGround(groundId) {
+  if (!groundId) return;
   const groundLayer = document.getElementById('canvas-ground-layer');
   groundLayer.innerHTML = '';
-  const img = document.createElement('img');
-  img.src = src;
-  img.className = 'absolute bottom-0 w-full h-auto object-cover object-top';
-  img.draggable = false;
-  groundLayer.appendChild(img);
+  
+  let html = '';
+  if (groundId === 'grass') {
+    html = '<svg class="absolute bottom-0 w-full h-1/5" preserveAspectRatio="none" viewBox="0 0 100 100"><path fill="#22c55e" d="M0,50 Q25,20 50,50 T100,50 L100,100 L0,100 Z"/><path fill="#16a34a" d="M0,70 Q30,50 60,70 T100,60 L100,100 L0,100 Z"/></svg>';
+  } else if (groundId === 'scifi') {
+    html = '<div class="absolute bottom-0 w-full h-1/4 bg-gray-900 flex items-end justify-center"><div class="w-4/5 h-2/3 bg-cyan-900 rounded-[100%] border-t-4 border-cyan-400 shadow-[0_-5px_30px_rgba(34,211,238,0.5)] transform translate-y-1/3"></div></div>';
+  } else if (groundId === 'asphalt') {
+    html = '<div class="absolute bottom-0 w-full h-1/4 bg-gray-700 border-t-8 border-gray-400 perspective-[200px] flex justify-center pt-4"><div class="w-2 h-full bg-yellow-400 mx-2 transform skew-x-[-20deg]"></div><div class="w-2 h-full bg-yellow-400 mx-2 transform skew-x-[20deg]"></div></div>';
+  } else if (groundId === 'cloud') {
+    html = '<svg class="absolute bottom-0 w-full h-1/4" preserveAspectRatio="none" viewBox="0 0 100 100"><circle cx="20" cy="80" r="35" fill="#fbcfe8" opacity="0.9"/><circle cx="50" cy="70" r="45" fill="#e9d5ff" opacity="0.9"/><circle cx="80" cy="80" r="40" fill="#fdf4ff" opacity="0.9"/></svg>';
+  }
+  
+  groundLayer.innerHTML = html;
   saveState();
 }
 
@@ -187,54 +197,44 @@ function addCharacter(src, x, y) {
 
 function addTitle() {
   const title = document.createElement('div');
-  title.className = 'canvas-element is-text canvas-text-editable font-anton text-6xl text-white pointer-events-auto p-2';
-  title.contentEditable = true;
-  title.innerText = 'TIÊU ĐỀ PHIM';
+  title.className = 'canvas-element is-text canvas-text-editable font-anton text-6xl text-white pointer-events-auto p-2 whitespace-nowrap';
+  title.contentEditable = false;
+  title.innerText = 'TÊN PHIM';
   title.dataset.scale = "1";
   title.style.textShadow = '2px 2px 4px rgba(0,0,0,0.5)';
   
   textLayer.appendChild(title);
+  makeInteractive(title);
   
-  // Center at top 15%
+  // Start centered
   const cw = posterCanvas.offsetWidth;
   const ch = posterCanvas.offsetHeight;
-  const ew = title.offsetWidth;
-  title.style.left = `${(cw - ew) / 2}px`;
-  title.style.top = `${ch * 0.15}px`;
+  title.style.left = `${(cw - title.offsetWidth) / 2}px`;
+  title.style.top = `15%`;
   
-  makeInteractive(title);
   selectElement(title);
+  saveState();
 }
 
 function addBillingBlock() {
-  // Check if exists
-  if (document.getElementById('billing-block-instance')) {
-    const existing = document.getElementById('billing-block-instance');
-    // Just move to bottom
-    existing.style.bottom = '40px';
-    existing.style.top = 'auto';
-    existing.style.left = '50%';
-    existing.style.transform = 'translateX(-50%)';
-    return;
-  }
-
+  if (document.getElementById('billing-block-instance')) return;
   const billing = document.createElement('div');
   billing.id = 'billing-block-instance';
   billing.className = 'canvas-element is-text canvas-text-editable billing-block-style pointer-events-auto font-be-vietnam p-2';
-  billing.contentEditable = true;
-  billing.dataset.scale = "1";
+  billing.contentEditable = false;
+  billing.dataset.scale = "2";
+  billing.style.fontSize = "20px";
+  billing.style.color = "#000000";
+  billing.style.textShadow = 'none';
   billing.innerText = 'MỘT BỘ PHIM CỦA [TÊN HỌC SINH] • ĐẠO DIỄN: [TÊN HỌC SINH] • KHỞI CHIẾU HÈ NÀY • ĐỊNH DẠNG 2D, 3D & IMAX';
   
-  // Snap to bottom center
+  textLayer.appendChild(billing);
+  makeInteractive(billing);
   billing.style.bottom = '40px';
   billing.style.left = '50%';
   billing.style.transform = 'translateX(-50%)';
   // Needs to be wide enough
   billing.style.width = '80%';
-  
-  // When interacting with billing, reset transform if dragged
-  makeInteractive(billing, true);
-  textLayer.appendChild(billing);
 }
 
 // Canvas Interaction Logic
@@ -282,31 +282,40 @@ function makeInteractive(el, isBilling = false) {
     let newLeft = initialLeft + dx;
     let newTop = initialTop + dy;
     
-    // Boundary Constraints
-    const cw = posterCanvas.offsetWidth;
-    const ch = posterCanvas.offsetHeight;
-    const ew = el.offsetWidth;
-    const eh = el.offsetHeight;
-    
-    newLeft = Math.max(0, Math.min(newLeft, cw - ew));
-    newTop = Math.max(0, Math.min(newTop, ch - eh));
-    
     el.style.left = `${newLeft}px`;
     el.style.top = `${newTop}px`;
   });
 
   el.addEventListener('pointerup', (e) => {
-    if (!isDragging) return;
-    isDragging = false;
-    el.releasePointerCapture(e.pointerId);
-    posterCanvas.style.touchAction = 'auto';
+    if (isDragging) {
+      isDragging = false;
+      el.releasePointerCapture(e.pointerId);
+      saveState();
+    }
   });
 
+  if (el.classList.contains('is-text')) {
+    el.addEventListener('dblclick', (e) => {
+      el.contentEditable = true;
+      el.focus();
+      document.execCommand('selectAll', false, null);
+    });
+    
+    el.addEventListener('blur', (e) => {
+      el.contentEditable = false;
+    });
+
+    el.addEventListener('input', () => {
+      saveState();
+    });
+  } 
+  
   // Delete element on backspace/delete if selected and not typing
   el.addEventListener('keydown', (e) => {
     if ((e.key === 'Backspace' || e.key === 'Delete') && document.activeElement !== el) {
       el.remove();
       deselectAll();
+      saveState();
     }
   });
 }
@@ -349,6 +358,7 @@ function saveState() {
   const state = {
     orientation: currentOrientation,
     bgLayer: bgLayer.innerHTML,
+    groundLayer: document.getElementById('canvas-ground-layer').innerHTML,
     elementsLayer: elementsLayer.innerHTML,
     textLayer: textLayer.innerHTML
   };
@@ -369,6 +379,7 @@ function loadState() {
     currentOrientation = state.orientation || 'portrait';
     setCanvasSize();
     bgLayer.innerHTML = state.bgLayer;
+    if (state.groundLayer) document.getElementById('canvas-ground-layer').innerHTML = state.groundLayer;
     elementsLayer.innerHTML = state.elementsLayer;
     textLayer.innerHTML = state.textLayer;
     
@@ -382,6 +393,7 @@ function loadState() {
 function resetCanvas() {
   if (confirm('Bạn có chắc chắn muốn làm mới toàn bộ canvas không?')) {
     bgLayer.innerHTML = '';
+    document.getElementById('canvas-ground-layer').innerHTML = '';
     elementsLayer.innerHTML = '';
     textLayer.innerHTML = '';
     localStorage.removeItem('moviePosterState');
