@@ -204,7 +204,7 @@ function addBillingBlock() {
   billing.style.fontSize = "20px";
   billing.style.color = "#000000";
   billing.style.textShadow = 'none';
-  billing.innerText = 'Khởi chiếu ngày xx.xx.xxxx Đạo diễn (Tên học sinh) Diễn viên (Tên học sinh),(Tên học sinh),(Tên học sinh),....';
+  billing.innerText = 'Khởi chiếu ngày 10.10.2026 Đạo diễn (Tên học sinh) Diễn viên (Tên học sinh),(Tên học sinh),(Tên học sinh),....';
   
   textLayer.appendChild(billing);
   makeInteractive(billing);
