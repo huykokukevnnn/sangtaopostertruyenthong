@@ -225,7 +225,11 @@ function addBillingBlock() {
   billing.style.left = '50%';
   billing.style.transform = 'translateX(-50%)';
   // Needs to be wide enough
-  billing.style.width = '80%';
+  billing.style.width = '90%';
+  billing.style.textAlign = 'center';
+  
+  selectElement(billing);
+  saveState();
 }
 
 // Canvas Interaction Logic
@@ -233,11 +237,14 @@ function makeInteractive(el, isBilling = false) {
   let isDragging = false;
   let startX, startY, initialLeft, initialTop;
 
+  let hasMoved = false;
+
   el.addEventListener('pointerdown', (e) => {
     // If editing text, don't drag immediately unless clicking border
     if (el.contentEditable === "true" && document.activeElement === el) return;
     
     isDragging = true;
+    hasMoved = false;
     selectElement(el);
     el.style.zIndex = ++zIndexCounter;
     
@@ -271,6 +278,10 @@ function makeInteractive(el, isBilling = false) {
     const dx = (e.clientX / scale) - startX;
     const dy = (e.clientY / scale) - startY;
     
+    if (Math.abs(dx) > 1 || Math.abs(dy) > 1) {
+      hasMoved = true;
+    }
+    
     let newLeft = initialLeft + dx;
     let newTop = initialTop + dy;
     
@@ -282,7 +293,9 @@ function makeInteractive(el, isBilling = false) {
     if (isDragging) {
       isDragging = false;
       el.releasePointerCapture(e.pointerId);
-      saveState();
+      if (hasMoved) {
+        saveState();
+      }
     }
   });
 
@@ -359,7 +372,12 @@ function deselectAll() {
 
 // App State Management
 function saveState() {
-  deselectAll();
+  // temporarily remove selected class to not save it in HTML
+  const currentSelected = selectedElement;
+  if (currentSelected) {
+    currentSelected.classList.remove('selected');
+  }
+
   const state = {
     orientation: currentOrientation,
     bgLayer: bgLayer.innerHTML,
@@ -367,6 +385,10 @@ function saveState() {
     textLayer: textLayer.innerHTML
   };
   localStorage.setItem('moviePosterState', JSON.stringify(state));
+  
+  if (currentSelected) {
+    currentSelected.classList.add('selected');
+  }
   
   // Show toast
   const toast = document.getElementById('toast');
