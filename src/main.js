@@ -67,6 +67,20 @@ function init() {
     const scale = e.target.value / 100;
     updateSize(scale);
   });
+
+  // Action Buttons
+  document.getElementById('btn-save').addEventListener('click', saveState);
+  document.getElementById('btn-reset').addEventListener('click', resetCanvas);
+  document.getElementById('btn-preview').addEventListener('click', showPreview);
+  document.getElementById('close-preview-btn').addEventListener('click', hidePreview);
+  document.getElementById('add-title-btn').addEventListener('click', addTitle);
+  document.getElementById('add-billing-btn').addEventListener('click', addBillingBlock);
+  
+  loadState();
+
+  if (!document.getElementById('billing-block-instance')) {
+    // DO NOT ADD DEFAULT
+  }
 }
 
 function updateSize(scale) {
@@ -83,21 +97,6 @@ function updateSize(scale) {
       // base width for image is 256px
       selectedElement.style.width = `${256 * scale}px`;
     }
-  }
-}
-
-  // Action Buttons
-  document.getElementById('btn-save').addEventListener('click', saveState);
-  document.getElementById('btn-reset').addEventListener('click', resetCanvas);
-  document.getElementById('btn-preview').addEventListener('click', showPreview);
-  document.getElementById('close-preview-btn').addEventListener('click', hidePreview);
-  document.getElementById('add-title-btn').addEventListener('click', addTitle);
-  document.getElementById('add-billing-btn').addEventListener('click', addBillingBlock);
-  
-  loadState();
-
-  if (!document.getElementById('billing-block-instance')) {
-    // DO NOT ADD DEFAULT
   }
 }
 
