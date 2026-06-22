@@ -141,9 +141,6 @@ function setupCanvasDropZone() {
 
     if (type === 'background') {
       setBackground(src);
-    } else if (type === 'ground') {
-      const groundId = document.querySelector(`[data-type="ground"][draggable="true"]:hover, [data-type="ground"]:active`)?.dataset.groundId || e.dataTransfer.getData('groundId');
-      setGround(groundId);
     } else if (type === 'character') {
       addCharacter(src, x, y);
     } else if (type === 'billing') {
@@ -160,26 +157,6 @@ function setBackground(src) {
   img.className = 'w-full h-full object-cover';
   img.draggable = false;
   bgLayer.appendChild(img);
-  saveState();
-}
-
-function setGround(groundId) {
-  if (!groundId) return;
-  const groundLayer = document.getElementById('canvas-ground-layer');
-  groundLayer.innerHTML = '';
-  
-  let html = '';
-  if (groundId === 'grass') {
-    html = '<svg class="absolute bottom-0 w-full h-1/5" preserveAspectRatio="none" viewBox="0 0 100 100"><path fill="#22c55e" d="M0,50 Q25,20 50,50 T100,50 L100,100 L0,100 Z"/><path fill="#16a34a" d="M0,70 Q30,50 60,70 T100,60 L100,100 L0,100 Z"/></svg>';
-  } else if (groundId === 'scifi') {
-    html = '<div class="absolute bottom-0 w-full h-1/4 bg-gray-900 flex items-end justify-center"><div class="w-4/5 h-2/3 bg-cyan-900 rounded-[100%] border-t-4 border-cyan-400 shadow-[0_-5px_30px_rgba(34,211,238,0.5)] transform translate-y-1/3"></div></div>';
-  } else if (groundId === 'asphalt') {
-    html = '<div class="absolute bottom-0 w-full h-1/4 bg-gray-700 border-t-8 border-gray-400 perspective-[200px] flex justify-center pt-4"><div class="w-2 h-full bg-yellow-400 mx-2 transform skew-x-[-20deg]"></div><div class="w-2 h-full bg-yellow-400 mx-2 transform skew-x-[20deg]"></div></div>';
-  } else if (groundId === 'cloud') {
-    html = '<svg class="absolute bottom-0 w-full h-1/4" preserveAspectRatio="none" viewBox="0 0 100 100"><circle cx="20" cy="80" r="35" fill="#fbcfe8" opacity="0.9"/><circle cx="50" cy="70" r="45" fill="#e9d5ff" opacity="0.9"/><circle cx="80" cy="80" r="40" fill="#fdf4ff" opacity="0.9"/></svg>';
-  }
-  
-  groundLayer.innerHTML = html;
   saveState();
 }
 
@@ -227,7 +204,7 @@ function addBillingBlock() {
   billing.style.fontSize = "20px";
   billing.style.color = "#000000";
   billing.style.textShadow = 'none';
-  billing.innerText = 'MỘT BỘ PHIM CỦA [TÊN HỌC SINH] • ĐẠO DIỄN: [TÊN HỌC SINH] • KHỞI CHIẾU HÈ NÀY • ĐỊNH DẠNG 2D, 3D & IMAX';
+  billing.innerText = 'Khởi chiếu ngày xx.xx.xxxx Đạo diễn (Tên học sinh) Diễn viên (Tên học sinh),(Tên học sinh),(Tên học sinh),....';
   
   textLayer.appendChild(billing);
   makeInteractive(billing);
@@ -359,7 +336,6 @@ function saveState() {
   const state = {
     orientation: currentOrientation,
     bgLayer: bgLayer.innerHTML,
-    groundLayer: document.getElementById('canvas-ground-layer').innerHTML,
     elementsLayer: elementsLayer.innerHTML,
     textLayer: textLayer.innerHTML
   };
@@ -377,10 +353,9 @@ function loadState() {
   const saved = localStorage.getItem('moviePosterState');
   if (saved) {
     const state = JSON.parse(saved);
-    currentOrientation = state.orientation || 'portrait';
+    currentOrientation = 'portrait';
     setCanvasSize();
     bgLayer.innerHTML = state.bgLayer;
-    if (state.groundLayer) document.getElementById('canvas-ground-layer').innerHTML = state.groundLayer;
     elementsLayer.innerHTML = state.elementsLayer;
     textLayer.innerHTML = state.textLayer;
     
@@ -394,7 +369,6 @@ function loadState() {
 function resetCanvas() {
   if (confirm('Bạn có chắc chắn muốn làm mới toàn bộ canvas không?')) {
     bgLayer.innerHTML = '';
-    document.getElementById('canvas-ground-layer').innerHTML = '';
     elementsLayer.innerHTML = '';
     textLayer.innerHTML = '';
     localStorage.removeItem('moviePosterState');
