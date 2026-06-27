@@ -1,3 +1,5 @@
+import html2canvas from 'html2canvas';
+
 // UI Elements
 const canvasContainer = document.getElementById('canvas-container');
 const posterCanvas = document.getElementById('poster-canvas');
@@ -73,8 +75,46 @@ function init() {
     saveState();
   });
 
+  // Layer Controls
+  document.getElementById('btn-layer-up').addEventListener('click', () => {
+    if (selectedElement) {
+      selectedElement.style.zIndex = ++zIndexCounter;
+      saveState();
+    }
+  });
+
+  document.getElementById('btn-layer-down').addEventListener('click', () => {
+    if (selectedElement) {
+      // Ensure it doesn't go below 1
+      const currentZ = parseInt(selectedElement.style.zIndex || zIndexCounter) || 1;
+      selectedElement.style.zIndex = Math.max(1, currentZ - 1);
+      saveState();
+    }
+  });
+
+  document.getElementById('btn-flip').addEventListener('click', () => {
+    if (selectedElement) {
+      const isFlipped = selectedElement.dataset.flipped === 'true';
+      selectedElement.dataset.flipped = !isFlipped;
+      if (!isFlipped) {
+        selectedElement.style.transform = 'scaleX(-1)';
+      } else {
+        selectedElement.style.transform = 'none';
+      }
+      saveState();
+    }
+  });
+
+  document.getElementById('btn-delete-element').addEventListener('click', () => {
+    if (selectedElement) {
+      selectedElement.remove();
+      deselectAll();
+      saveState();
+    }
+  });
+
   // Action Buttons
-  document.getElementById('btn-save').addEventListener('click', saveState);
+  document.getElementById('btn-save').addEventListener('click', downloadPoster);
   document.getElementById('btn-reset').addEventListener('click', resetCanvas);
   document.getElementById('btn-preview').addEventListener('click', showPreview);
   document.getElementById('btn-close-preview').addEventListener('click', hidePreview);
@@ -233,13 +273,18 @@ function makeInteractive(el, isBilling = false) {
     startY = e.clientY / scaleCanvas;
     
     // Normalize coordinates to prevent jumping ONLY if constrained
-    if (el.style.bottom || el.style.right || el.style.transform || (el.style.top && el.style.top.includes('%')) || (el.style.left && el.style.left.includes('%'))) {
+    if (el.style.bottom || el.style.right || (el.style.transform && el.style.transform !== 'scaleX(-1)') || (el.style.top && el.style.top.includes('%')) || (el.style.left && el.style.left.includes('%'))) {
       const rect = el.getBoundingClientRect();
       const parentRect = posterCanvas.getBoundingClientRect();
       
       el.style.bottom = 'auto';
       el.style.right = 'auto';
-      el.style.transform = 'none';
+      // keep flip transform if exists
+      if (el.dataset.flipped === 'true') {
+        el.style.transform = 'scaleX(-1)';
+      } else {
+        el.style.transform = 'none';
+      }
       
       el.style.left = `${(rect.left - parentRect.left) / scaleCanvas}px`;
       el.style.top = `${(rect.top - parentRect.top) / scaleCanvas}px`;
@@ -412,6 +457,46 @@ function resetCanvas() {
     textLayer.innerHTML = '';
     localStorage.removeItem('moviePosterState');
     deselectAll();
+  }
+}
+
+async function downloadPoster() {
+  saveState();
+  deselectAll(); // Hide selection outlines
+  
+  // Create a temporary clone for rendering to prevent visual glitches during html2canvas
+  const originalTransform = posterCanvas.style.transform;
+  posterCanvas.style.transform = 'none';
+  
+  try {
+    const canvas = await html2canvas(posterCanvas, {
+      scale: 2, // High resolution
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: null
+    });
+    
+    const link = document.createElement('a');
+    link.download = 'poster_phim.png';
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+    
+    // Show toast for download
+    const toast = document.getElementById('toast');
+    toast.textContent = 'Đã tải ảnh thành công!';
+    toast.classList.remove('opacity-0', 'pointer-events-none');
+    setTimeout(() => {
+      toast.classList.add('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.textContent = 'Đã lưu trạng thái Poster!';
+      }, 500);
+    }, 3000);
+    
+  } catch (error) {
+    console.error('Error downloading poster:', error);
+    alert('Có lỗi xảy ra khi tải ảnh. Vui lòng thử lại.');
+  } finally {
+    posterCanvas.style.transform = originalTransform;
   }
 }
 

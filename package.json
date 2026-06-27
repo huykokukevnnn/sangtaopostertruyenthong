@@ -17,6 +17,8 @@
     "vite": "^8.0.12"
   },
   "dependencies": {
+    "@imgly/background-removal-node": "^1.4.5",
+    "html2canvas": "^1.4.1",
     "jimp": "^1.6.1"
   }
 }

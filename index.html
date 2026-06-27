@@ -44,6 +44,13 @@
             <input type="color" id="text-color-picker" value="#ffffff" class="w-8 h-8 rounded cursor-pointer border-none p-0">
           </div>
         </div>
+
+        <div class="flex items-center gap-2 border-l pl-4 border-gray-200">
+          <button id="btn-layer-up" title="Lên trên" class="w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">↑</button>
+          <button id="btn-layer-down" title="Xuống dưới" class="w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">↓</button>
+          <button id="btn-flip" title="Lật ngang" class="w-8 h-8 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold">↔</button>
+          <button id="btn-delete-element" title="Xóa" class="w-8 h-8 flex items-center justify-center rounded bg-red-100 hover:bg-red-200 text-red-600 font-bold">✕</button>
+        </div>
       </div>
 
       <!-- Canvas Container -->
@@ -64,8 +71,7 @@
     <aside id="sidebar" class="w-[40%] h-full bg-slate-50 flex flex-col shadow-2xl border-l border-gray-200 z-50">
       
       <header class="p-6 bg-white border-b border-gray-200">
-        <h1 class="text-3xl font-be-vietnam font-black text-indigo-700 tracking-tight">Sáng tạo Poster Phim</h1>
-        <p class="text-sm text-gray-500 mt-1 font-be-vietnam">Kéo thả để thiết kế poster phim của riêng bạn!</p>
+        <h1 class="text-3xl font-be-vietnam font-black text-indigo-700 tracking-tight">Sáng tạo Poster</h1>
       </header>
 
       <!-- Components Area -->
@@ -84,9 +90,17 @@
           </div>
         </section>
 
+        <!-- Titles Section -->
+        <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+          <h2 class="font-bold text-lg mb-3 text-gray-800">2. Thêm chữ</h2>
+          <button id="add-title-btn" class="w-full bg-blue-100 text-blue-700 font-bold py-3 rounded-lg border-2 border-blue-200 hover:bg-blue-200 transition border-dashed flex items-center justify-center gap-2">
+            <span class="text-xl">+</span> Thêm chữ
+          </button>
+        </section>
+
         <!-- Characters Section -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 class="font-bold text-lg mb-3 text-gray-800">2. Nhân vật & Sticker</h2>
+          <h2 class="font-bold text-lg mb-3 text-gray-800">3. Nhân vật & Sticker</h2>
           <div class="grid grid-cols-3 gap-3" id="panel-characters">
             <img src="/assets/char_joy.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/char_angry.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
@@ -99,8 +113,10 @@
 
         <!-- Props Section -->
         <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 class="font-bold text-lg mb-3 text-gray-800">3. Đồ vật & Trang trí</h2>
+          <h2 class="font-bold text-lg mb-3 text-gray-800">4. Đồ vật & Trang trí</h2>
           <div class="grid grid-cols-3 gap-3" id="panel-props">
+            <img src="/assets/prop_bone.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
+            <img src="/assets/prop_ball.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/prop_tree.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/prop_house.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/prop_car.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
@@ -110,15 +126,6 @@
             <img src="/assets/prop_camera_tripod.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
             <img src="/assets/prop_bed.png" class="draggable-element w-full aspect-square object-contain rounded-lg cursor-grab hover:bg-gray-100 transition p-2 border border-gray-100" draggable="true" data-type="character">
           </div>
-        </section>
-
-        <!-- Titles Section -->
-        <section class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
-          <h2 class="font-bold text-lg mb-3 text-gray-800">4. Tên phim</h2>
-          <button id="add-title-btn" class="w-full bg-blue-100 text-blue-700 font-bold py-3 rounded-lg border-2 border-blue-200 hover:bg-blue-200 transition border-dashed flex items-center justify-center gap-2">
-            <span class="text-xl">+</span> Thêm Tiêu Đề
-          </button>
-
         </section>
 
 

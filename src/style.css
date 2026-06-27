@@ -33,9 +33,7 @@
 }
 
 .canvas-element.selected {
-  outline: 2px dashed #3b82f6; /* blue-500 */
-  outline-offset: 2px;
-  box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+  filter: drop-shadow(0 0 4px #3b82f6) drop-shadow(0 0 8px #3b82f6);
 }
 
 .billing-block-style {
